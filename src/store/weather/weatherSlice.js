@@ -9,33 +9,39 @@ const initialState = {
   message: "",
 };
 
-export const fETCH_WEATHER = createAsyncThunk(
-  "fetch-weather",
+export const fETCH_WEATHER_DATA = createAsyncThunk(
+  "weather/fetchWeatherData",
   async (userData, thunkApi) => {
     try {
-      return await weatherService.fETCH_WEATHER_DATA(userData);
+      return await weatherService.FETCH_WEATHER_DATA(userData);
     } catch (error) {
-      return thunkApi.rejectWithValue(error);
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkApi.rejectWithValue(message);
     }
   }
 );
 
 export const weatherSlice = createSlice({
-  name: "searchPage",
+  name: "weather",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(fETCH_WEATHER.pending, (state) => {
+    builder.addCase(fETCH_WEATHER_DATA.pending, (state) => {
       state.isLoading = true;
       state.isSuccess = false;
       state.isError = false;
     });
-    builder.addCase(fETCH_WEATHER.rejected, (state) => {
+    builder.addCase(fETCH_WEATHER_DATA.rejected, (state) => {
       state.isLoading = false;
       state.isSuccess = false;
       state.isError = true;
     });
-    builder.addCase(fETCH_WEATHER.fulfilled, (state, action) => {
+    builder.addCase(fETCH_WEATHER_DATA.fulfilled, (state, action) => {
       state.isLoading = false;
       state.isSuccess = true;
       state.isError = false;

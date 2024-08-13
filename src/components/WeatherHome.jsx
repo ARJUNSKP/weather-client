@@ -1,18 +1,14 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { fETCH_WEATHER } from "../store/weather/weatherSlice";
-import weatherService from "../store/weather/weatherService";
+import { useDispatch, useSelector } from "react-redux";
+import { fETCH_WEATHER_DATA } from "../store/weather/weatherSlice";
 
 const WeatherHome = () => {
   const [searchData, setSearch] = useState("");
-  const [data, setData] = useState("");
   const dispatch = useDispatch();
+  const { data } = useSelector((state) => state.weather.searchWeatherData);
+
   const fetchSearchData = async () => {
-    dispatch(fETCH_WEATHER({ placeName: searchData }));
-    const dataSet = await weatherService.fETCH_WEATHER_DATA({
-      placeName: searchData,
-    });
-    setData(dataSet.data);
+    dispatch(fETCH_WEATHER_DATA({ placeName: searchData }));
     setSearch("");
   };
 
@@ -23,8 +19,6 @@ const WeatherHome = () => {
 
     return `${day}-${month}-${year}`;
   };
-
-  console.log(data);
 
   return (
     <div className="flex flex-col gap-2 px-5 py-8 w-[100%] h-[100vh] bg-[url('https://img.freepik.com/premium-vector/sky-clouds-design-with-flat-cartoon-poster-flyers-postcards-web-banners_771576-58.jpg')] bg-center bg-cover filter bg-no-repeat">
@@ -50,6 +44,7 @@ const WeatherHome = () => {
         <div className="flex flex-col md:flex-row">
           <div className="bg-custom-yellow w-[100%] h-[20rem] rounded-[15px] flex flex-col justify-center items-center md:w-[50%]">
             <strong className="text-yellow-700">Today</strong>
+            <strong className="text-yellow-700">{data?.name}</strong>
             <strong className="text-yellow-700">
               <img
                 src={`http://openweathermap.org/img/wn/${data?.weather[0]?.icon}.png`}
@@ -57,7 +52,7 @@ const WeatherHome = () => {
               />
             </strong>
             <strong className="text-yellow-700">
-              {data?.main?.temp - 273.15}°C
+              {(data?.main?.temp - 273.15).toFixed(2)}°C
             </strong>
             <strong className="text-yellow-700">{data?.weather[0].main}</strong>
             <strong className="text-yellow-700">
